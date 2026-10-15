@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__),
 from tag_engine import node, table, tr, th, F, M, MC, REST
 ```
 
-(`examples/sunflower/config.py` is a complete working example.)
+(Each `examples/*/config.py` is a complete working example.)
 
 ## Required names
 

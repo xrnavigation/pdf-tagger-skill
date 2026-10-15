@@ -11,9 +11,10 @@ single rendered pixel**. The deliverable is a new file next to the original
 
 All scripts live in `scripts/` relative to this skill. They need Python 3.11+
 with `pikepdf`, `pdfplumber`, `pypdfium2`, `Pillow`
-(`pip install -r requirements.txt`). A worked example (2-page bank form,
-95 fields, two disclosure tables → veraPDF PDF/UA-1 PASS) is in
-`examples/sunflower/config.py` — skim it before writing your first config.
+(`pip install -r requirements.txt`). Two runnable examples — a report with a
+data table, and a form with fields and checkboxes, both tagging to a
+zero-pixel diff and a veraPDF PDF/UA-1 PASS — are in `examples/`; skim their
+configs before writing your first one.
 
 ## How it works
 
@@ -44,8 +45,8 @@ python scripts/opdump.py in.pdf > ops.txt  # per-op y/x — the band coordinates
 ```
 
 **Probe the real file before encoding heuristics.** Do not assume
-"10pt bold = heading": in the example document, 10pt bold is used both for
-section headings (H2) and for table row headers (TH) inside a disclosure box.
+"10pt bold = heading": the same bold 10pt face is often used both for section
+headings (H2) and for table row headers (TH) inside a disclosure box.
 Classify from the actual layout, item by item. Bands must come from
 `opdump.py` values (engine-identical math), not from pdfplumber's `top`.
 

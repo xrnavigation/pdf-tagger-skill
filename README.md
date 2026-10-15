@@ -19,10 +19,13 @@ This skill gives Claude a repeatable, verifiable remediation workflow:
 - a reading-order "readback" that prints the document the way assistive
   technology walks it.
 
-The worked example (`examples/sunflower/`) tags a 2-page bank credit-card
-application — 95 AcroForm fields, two disclosure tables, printed checkbox
-dingbats — and the result validates as **PDF/UA-1 compliant in
-[veraPDF](https://verapdf.org)** with a zero-pixel diff.
+Two self-contained examples ship with committed inputs, generators, and
+configs: `examples/report/` (headings plus a data table with column headers)
+and `examples/form/` (an AcroForm with named, tooltipped fields). Both tag to
+a zero-pixel diff and validate as **PDF/UA-1 compliant in
+[veraPDF](https://verapdf.org)**. The engine was developed against a
+real-world two-page banking application form — 95 AcroForm fields, two
+disclosure tables, printed checkbox dingbats — with the same results.
 
 ## Install
 

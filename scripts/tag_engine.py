@@ -63,7 +63,7 @@ def mat_mul(a, b):
 ID6 = (1, 0, 0, 1, 0, 0)
 TEXT_SHOW = {'Tj', 'TJ', "'", '"'}
 PATH_ART = {'m','l','c','v','y','re','h','W','W*','n',
-            'S','s','f','F','f*','B','B*','b','b*','sh','q','Q','cm'}
+            'S','s','f','F','f*','B','B*','b','b*','sh'}
 POSITIONED = TEXT_SHOW | {'Do'}
 
 
@@ -136,10 +136,6 @@ def run(cfg, src, out):
             elif op == 'Q': ctm = stack.pop() if stack else ID6; qdepth -= 1
             elif op == 'cm': ctm = mat_mul(tuple(float(x) for x in o), ctm)
             elif op == 'BT':
-                if qdepth != 0:
-                    raise SystemExit(
-                        f"page {pageno+1}: BT inside q/Q — engine's artifact "
-                        "regioning assumes text objects at q-depth 0")
                 tm = tlm = ID6
             elif op == 'Tf': font = str(o[0])
             elif op == 'Tm': tm = tlm = tuple(float(x) for x in o)
@@ -236,6 +232,11 @@ def run(cfg, src, out):
                 outops.append(inst); continue
             if op == 'ET':
                 close_region(); st['in_bt'] = False
+                outops.append(inst); continue
+            if op in ('q', 'Q'):
+                # keep marked content properly nested inside q/Q pairs
+                if st['inner'] == 0:
+                    close_region()
                 outops.append(inst); continue
             if op in ('BDC', 'BMC'):
                 if st['inner'] == 0 and lab is not None and lab != st['open']:

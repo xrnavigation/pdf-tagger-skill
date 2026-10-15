@@ -162,9 +162,27 @@ check(sp == n, f'all widgets have StructParent in ParentTree ({sp})')
 check(objr_ok == n, f'all OBJR backlinks correct ({objr_ok})')
 
 # --------------------------------------------------------------- 5. fonts
+# Only fonts that are active at a text-show op matter: unused Resources
+# entries and never-rendering selections (e.g. reportlab's default
+# "BT /F1 12 Tf ET") are harmless, and veraPDF ignores them too.
 print('== fonts ==')
 for pageno, page in enumerate(pdf.pages):
+    used = set()
+    cur = None
+    fstack = []
+    for inst in pikepdf.parse_content_stream(page):
+        op = str(inst.operator)
+        if op == 'Tf':
+            cur = str(inst.operands[0])
+        elif op == 'q':
+            fstack.append(cur)
+        elif op == 'Q':
+            cur = fstack.pop() if fstack else cur
+        elif op in TEXT_SHOW and cur is not None:
+            used.add(cur)
     for fname, f in page.Resources.get('/Font', {}).items():
+        if str(fname) not in used:
+            continue
         sub = str(f.get('/Subtype'))
         desc = (f.DescendantFonts[0].FontDescriptor if sub == '/Type0'
                 else f.get('/FontDescriptor'))
