@@ -1,8 +1,7 @@
 # pdf-tagger-skill
 
-An [Agent Skills](https://agentskills.io) package for Claude Code, Codex, and Antigravity,
-for
-tagging existing PDFs for accessibility (PDF/UA-1 / Section 508 / WCAG)
+An [Agent Skills](https://agentskills.io) package for Claude Code, Codex, and
+Antigravity that tags existing PDFs for accessibility (PDF/UA-1 / Section 508 / WCAG)
 **without changing a single rendered pixel**.
 
 Untagged PDFs are unreadable structure-wise to screen readers: no headings,
