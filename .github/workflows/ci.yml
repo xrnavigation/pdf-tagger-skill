@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+cache-mode: none
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  skills:
+    uses: xrnavigation/web-a11y-plugin/.github/workflows/skills-ci.yml@b71e5fac33e0a4b6105400a6262dbdc07cec8744 # integrated shared validator
+    with:
+      skill-root: '.'
+      installed-skill-name: 'pdf-tagger'
+  examples:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          version: '0.13.6'
+          python-version: '3.12'
+          enable-cache: false
+      - name: Install PDF engine dependencies
+        run: |
+          uv venv
+          uv pip install -r requirements.txt
+      - name: Tag and verify both committed examples
+        run: |
+          for example in report form; do
+            (
+              cd "examples/$example"
+              ../../.venv/bin/python ../../scripts/tag_engine.py config.py input.pdf tagged.pdf
+              ../../.venv/bin/python ../../scripts/verify.py input.pdf tagged.pdf
+            )
+          done
